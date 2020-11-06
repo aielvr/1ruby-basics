@@ -28,12 +28,7 @@ class Route
 
   def add_station(station)
     return if stations.include?(station)
-
-    finish_index = stations.length - 1
-
-    finish_station = stations.pop
-    stations[finish_index] = station
-    stations.push(finish_station)
+    stations.insert(-2, station)
   end
 
   def remove_station(station)
