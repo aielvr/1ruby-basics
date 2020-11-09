@@ -1,0 +1,14 @@
+AllCops:
+  NewCops: enable
+
+Layout/EndOfLine:
+  EnforcedStyle: lf
+
+Style/FrozenStringLiteralComment:
+  Enabled: false
+
+Layout/LineLength:
+  Max: 120
+
+Style/Documentation:
+  Enabled: false
