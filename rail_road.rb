@@ -1,9 +1,9 @@
 require_relative 'station'
 require_relative 'train'
-require_relative 'cargo-train'
-require_relative 'passenger-train'
-require_relative 'cargo-wagon'
-require_relative 'passenger-wagon'
+require_relative 'cargo_train'
+require_relative 'passenger_train'
+require_relative 'cargo_wagon'
+require_relative 'passenger_wagon'
 require_relative 'route'
 
 class RailRoad
@@ -111,7 +111,6 @@ class RailRoad
 
   def create_route
     puts 'Введите через запятую числа, соответствующие начальной и конечной станциям'
-    # функция по просмотру списка станций - массив для хранения станций
 
     stations_indices = choose_stations
 

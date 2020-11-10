@@ -65,6 +65,12 @@ class Train
     wagons.delete_at(last_wagon_index) if speed.zero?
   end
 
+  def add_wagon(wagon)
+    return if wagons.include?(wagon)
+
+    wagons << wagon if speed.zero? && suitable_wagon?(wagon)
+  end
+
   protected
 
   attr_writer :wagons
@@ -72,13 +78,5 @@ class Train
   # нет необходимости использовать данный метод через интерфейс
   def suitable_wagon?(wagon)
     wagon.type == type
-  end
-
-  # реализация данного метода предназначена исключительно для его дальнейшего расширения в подклассах;
-  # не предполагается их использование извне
-  def add_wagon(wagon)
-    return if wagons.include?(wagon)
-
-    wagons << wagon if speed.zero?
   end
 end
