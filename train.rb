@@ -9,7 +9,6 @@ class Train
   attr_reader :route, :current_station, :number, :type, :wagons
 
   @@instances = []
-  @instance_counter = 0
 
   def self.find(train_number)
     @@instances.detect { |instance| instance.number == train_number }

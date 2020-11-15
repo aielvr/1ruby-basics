@@ -6,7 +6,6 @@ class Station
   attr_reader :name, :trains
 
   @@instances = []
-  @instance_counter = 0
 
   def self.all
     @@instances

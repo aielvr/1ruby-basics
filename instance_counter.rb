@@ -6,19 +6,19 @@ module InstanceCounter
 
   module ClassMethods
     def instances
-      instance_counter
+      @instance_counter ||= 0
     end
 
-    protected
-
-    attr_accessor :instance_counter
+    def increment_instance_counter
+      @instance_counter = instances.to_i.next
+    end
   end
 
   module InstanceMethods
     protected
 
     def register_instance
-      self.class.instance_counter += 1
+      self.class.increment_instance_counter
     end
   end
 end
