@@ -10,7 +10,7 @@ module InstanceCounter
     end
 
     def increment_instance_counter
-      @instance_counter = instances.to_i.next
+      @instance_counter = instances.next
     end
   end
 
