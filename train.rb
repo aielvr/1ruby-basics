@@ -8,6 +8,8 @@ class Train
   attr_accessor :speed
   attr_reader :route, :current_station, :number, :type, :wagons
 
+  NUMBER_FORMAT = /[а-я, 0-9]{3}\-?[а-я, 0-9]{2}/i
+
   @@instances = []
 
   def self.find(train_number)
@@ -19,7 +21,9 @@ class Train
     @speed = 0
     @wagons = []
     @@instances.push(self)
+
     register_instance
+    validate!
   end
 
   def stop
@@ -85,6 +89,13 @@ class Train
     wagons << wagon if speed.zero? && suitable_wagon?(wagon)
   end
 
+  def valid?
+    validate!
+    true
+  rescue
+    false
+  end
+
   protected
 
   attr_writer :wagons
@@ -92,5 +103,11 @@ class Train
   # нет необходимости использовать данный метод через интерфейс
   def suitable_wagon?(wagon)
     wagon.type == type
+  end
+
+  def validate!
+    raise "Number can't be nil" if number.nil?
+    raise "Number can't be empty string" if number.chomp.empty?
+    raise "Number has invalid format" if number !~ NUMBER_FORMAT
   end
 end
