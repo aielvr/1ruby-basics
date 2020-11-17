@@ -31,7 +31,7 @@ class Station
   def validate?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 

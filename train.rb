@@ -92,7 +92,7 @@ class Train
   def valid?
     validate!
     true
-  rescue
+  rescue StandardError
     false
   end
 
@@ -108,6 +108,6 @@ class Train
   def validate!
     raise "Number can't be nil" if number.nil?
     raise "Number can't be empty string" if number.chomp.empty?
-    raise "Number has invalid format" if number !~ NUMBER_FORMAT
+    raise 'Number has invalid format' if number !~ NUMBER_FORMAT
   end
 end

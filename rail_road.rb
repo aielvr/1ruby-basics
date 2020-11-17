@@ -79,16 +79,6 @@ class RailRoad
     menu
   end
 
-  # def manage_train_creation
-  #   error = create_train
-  #   puts "#{error}"
-  # # rescue Exception => e
-  # #   puts "#{e.message}"
-  # #   retry
-  #   puts "Новый #{train_type_name} поезд с номером #{train_number} успешно создан"
-  #   menu
-  # end
-
   def create_train
     begin
       puts 'Введите номер для нового поезда'
@@ -116,9 +106,8 @@ class RailRoad
         trains.push(PassengerTrain.new(train_number))
       else trains.push(CargoTrain.new(train_number))
       end
-
-    rescue Exception => e
-      puts "#{e.message}"
+    rescue StandardError => e
+      puts e.message.to_s
       retry
     end
     puts "Новый #{train_type_name} поезд с номером #{train_number} успешно создан"
