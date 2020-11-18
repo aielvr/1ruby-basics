@@ -20,10 +20,10 @@ class Train
     @number = number
     @speed = 0
     @wagons = []
-    @@instances.push(self)
 
-    register_instance
     validate!
+    @@instances.push(self)
+    register_instance
   end
 
   def stop
