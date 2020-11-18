@@ -14,6 +14,8 @@ class Station
   def initialize(name)
     @name = name
     @trains = []
+
+    validate!
     @@instances.push(self)
     register_instance
   end
@@ -26,7 +28,20 @@ class Station
     trains.delete(train)
   end
 
+  def validate?
+    validate!
+    true
+  rescue StandardError
+    false
+  end
+
   def show_type_sorted_trains
     trains.sort_by(&:type)
+  end
+
+  protected
+
+  def validate!
+    raise "Station name can't be empty string" if name.chomp.empty?
   end
 end

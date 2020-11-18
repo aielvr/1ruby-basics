@@ -80,32 +80,36 @@ class RailRoad
   end
 
   def create_train
-    puts 'Введите номер для нового поезда'
-    train_number = gets.to_i
-    puts 'Введите тип нового поезда'
-    puts '1 - для создания пассажирского поезда'
-    puts '2 - для грузового поезда'
-    cmd_number = gets.to_i
+    begin
+      puts 'Введите номер для нового поезда'
+      train_number = gets
+      puts 'Введите тип нового поезда'
+      puts '1 - для создания пассажирского поезда'
+      puts '2 - для грузового поезда'
+      cmd_number = gets.to_i
 
-    case cmd_number
-    when 1
-      train_type = :passenger
-    when 2
-      train_type = :cargo
-    else
-      return
+      case cmd_number
+      when 1
+        train_type = :passenger
+      when 2
+        train_type = :cargo
+      else
+        return
+      end
+
+      train_type_name = if train_type == :passenger
+                          'пассажирский'
+                        else 'грузовой'
+                        end
+
+      if train_type == :passenger
+        trains.push(PassengerTrain.new(train_number))
+      else trains.push(CargoTrain.new(train_number))
+      end
+    rescue StandardError => e
+      puts e.message.to_s
+      retry
     end
-
-    train_type_name = if train_type == :passenger
-                        'пассажирский'
-                      else 'грузовой'
-                      end
-
-    if train_type == :passenger
-      trains.push(PassengerTrain.new(train_number))
-    else trains.push(CargoTrain.new(train_number))
-    end
-
     puts "Новый #{train_type_name} поезд с номером #{train_number} успешно создан"
     menu
   end
