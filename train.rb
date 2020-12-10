@@ -89,6 +89,12 @@ class Train
     wagons << wagon if speed.zero? && suitable_wagon?(wagon)
   end
 
+  def handle_wagons
+    wagons.each do |wagon|
+      yield(wagon)
+    end
+  end
+
   def valid?
     validate!
     true
@@ -107,7 +113,7 @@ class Train
 
   def validate!
     raise "Number can't be nil" if number.nil?
-    raise "Number can't be empty string" if number.chomp.empty?
+    raise "Number can't be empty string" if number.empty? # #|| number.chomp.empty?
     raise 'Number has invalid format' if number !~ NUMBER_FORMAT
   end
 end

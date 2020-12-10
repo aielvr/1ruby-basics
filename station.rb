@@ -28,6 +28,12 @@ class Station
     trains.delete(train)
   end
 
+  def handle_trains
+    trains.each do |train|
+      yield(train)
+    end
+  end
+
   def validate?
     validate!
     true
