@@ -3,7 +3,7 @@ class CargoWagon < Wagon
 
   def initialize(volume)
     @type = :cargo
-    @volume = volume.to_i
+    @volume = volume
     @free_volume = @volume
   end
 
