@@ -16,24 +16,29 @@ class RailRoad
     @routes = []
   end
 
-  # def seed
-  #   st1 = Station.new 'Olympic Village'
-  #   stations.push(st1)
-  #   st2 = Station.new 'Roza Hutor'
-  #   stations.push(st2)
-  #   st3 = Station.new 'Hosta'
-  #   stations.push(st3)
-  #   r1 = Route.new st1, st3
-  #   routes.push(r1)
-  #   tr1 = CargoTrain.new 125
-  #   trains.push(tr1)
-  #   tr2 = PassengerTrain.new 267
-  #   trains.push(tr2)
-  #   tr3 = CargoTrain.new 13
-  #   trains.push(tr3)
-  #   tr4 = PassengerTrain.new 44
-  #   trains.push(tr4)
-  # end
+  def seed
+    st1 = Station.new 'Olympic Village'
+    stations.push(st1)
+    st2 = Station.new 'Roza Hutor'
+    stations.push(st2)
+    st3 = Station.new 'Hosta'
+    stations.push(st3)
+    r1 = Route.new st1, st3
+    routes.push(r1)
+    tr1 = CargoTrain.new '125-24'
+    trains.push(tr1)
+    tr2 = PassengerTrain.new '26705'
+    trains.push(tr2)
+    tr3 = CargoTrain.new '130-83'
+    trains.push(tr3)
+    tr4 = PassengerTrain.new '44905'
+    trains.push(tr4)
+
+    w1 = CargoWagon.new 100
+    w2 = PassengerWagon.new 25
+    tr1.add_wagon(w1)
+    tr2.add_wagon(w2)
+  end
 
   def menu
     puts 'Выберите действие, которое хотите воспроизвести c объектами системы железной дороги'
@@ -47,12 +52,10 @@ class RailRoad
 
     create_new_object if cmd_number == 1
     modify_object if cmd_number == 2
-    show_stations_and_trains if cmd_number == 3
+    show_details if cmd_number == 3
   end
 
-  private
-
-  # получение доступа к выполнению всех методов, представленных ниже, предусматривается из метода menu
+  # #private
 
   def create_new_object
     puts 'Для создания'
@@ -181,7 +184,12 @@ class RailRoad
 
   def assign_route
     puts 'Выберите поезд, для которого хотите определить маршрут из списка, представленного ниже'
-    train = choose_train
+    begin
+      train = choose_train
+    rescue StandardError => e
+      puts e.message.to_s
+      return
+    end
 
     puts "Выберите маршрут, который хотите назначить для поезда №#{train.number}"
     route = choose_route
@@ -191,36 +199,84 @@ class RailRoad
   end
 
   def manage_wagons
-    puts 'Выберите поезд, к которому хотите прицепить/отцепить вагон'
-    train = choose_train
+    begin
+      puts 'Выберите поезд'
+      train = choose_train
+    rescue StandardError => e
+      puts e.message.to_s
+      return
+    end
 
     puts 'Что хотите сделать с вагоном?'
     puts 'прицепить - введите 1'
     puts 'отцепить - введите 2'
+    if train.type === :passenger
+      puts 'занять место в вагоне - введите 3'
+    elsif train.type === :cargo
+      puts 'занять объем - введите 3'
+    end
     cmd_number = gets.to_i
 
     case cmd_number
     when 1
-      case train.type
-      when :passenger
-        wagon = PassengerWagon.new
-      when :cargo
-        wagon = CargoWagon.new
-      end
+      wagon = create_wagon(train.type)
 
       is_done = train.add_wagon(wagon)
       puts "Вагон успешно прицеплен к поезду №#{train.number}" if is_done
     when 2
       is_done = train.remove_wagon
       puts "Вагон успешно отцеплен от поезда №#{train.number}" if is_done
+    when 3
+      begin
+        puts 'Введите номер вагона из списка'
+        wagon = choose_wagon(train)
+      rescue StandardError => e
+        puts e.message.to_s
+        return
+      end
+
+      begin
+        case wagon.type
+        when :passenger
+          wagon.take_place
+          puts 'Пассажирское место успешно занято'
+        when :cargo
+          puts 'Укажите объем, который необходимо занять'
+          volume = gets.to_i
+          wagon.take_volume(volume)
+          puts "Занятый объем грузового вагона увеличился на #{volume}"
+        end
+      rescue StandardError => e
+        puts e.message.to_s
+        return
+      end
+
     end
 
     menu
   end
 
+  def create_wagon(train_type)
+    case train_type
+    when :passenger
+      puts 'Укажите количество пассажирских мест'
+      seat_quantity = gets.to_i
+      PassengerWagon.new seat_quantity
+    when :cargo
+      puts 'Укажите общий объём вагона'
+      volume = gets.to_i
+      CargoWagon.new volume
+    end
+  end
+
   def move_train
     puts 'Выберите поезд, который хотите переместить по маршруту'
-    train = choose_train
+    begin
+      train = choose_train
+    rescue StandardError => e
+      puts e.message.to_s
+      return
+    end
 
     puts 'Хотите переместить поезд на станцию вперед - введите 1, назад - введите 2'
     cmd_number = gets.to_i
@@ -237,12 +293,57 @@ class RailRoad
     menu
   end
 
-  def show_stations_and_trains
+  def show_details
+    puts 'Введите 1 для просмотра вагонов поезда'
+    puts '2 - для получения информации о всех поездах на станции'
+    cmd_number = gets.to_i
+
+    case cmd_number
+    when 1
+      begin
+        puts 'Выберите поезд'
+        train = choose_train
+      rescue StandardError => e
+        puts e.message.to_s
+        return
+      end
+
+      show_wagons_in_train(train)
+    when 2
+      show_trains_on_station
+    end
+  end
+
+  def show_wagons_in_train(train)
+    wagon_number_counter = 1
+    puts train.wagons.to_s
+    train.handle_wagons do |wagon|
+      if wagon.type === :passenger
+        puts "№#{wagon_number_counter} #{get_train_or_wagon_type(wagon)} свободные места: #{wagon.vacant_seat_quantity}, занятые места: #{wagon.taken_seat_quantity}"
+        wagon_number_counter += 1
+      elsif wagon.type === :cargo
+        puts "№#{wagon_number_counter} #{get_train_or_wagon_type(wagon)} свободный объем: #{wagon.free_volume}, занятый объем: #{wagon.taken_volume}"
+        wagon_number_counter += 1
+      end
+    end
+  end
+
+  def get_train_or_wagon_type(obj)
+    if obj.type === :passenger
+      'пассажирский'
+    elsif obj.type === :cargo
+      'грузовой'
+    end
+  end
+
+  def show_trains_on_station
     stations.each do |station|
       puts "Наименование станции: #{station.name}"
+      puts 'Поезда на станции:'
 
-      trains_numbers = station.trains.map { |train| "№#{train.number}" }
-      puts "Поезда на станции на текущий момент: #{trains_numbers.join(', ')}"
+      station.handle_trains do |train|
+        `№#{train.number} #{get_train_or_wagon_type(train)} количество вагонов: #{train.wagons.length}`
+      end
     end
   end
 
@@ -257,7 +358,9 @@ class RailRoad
       puts "поезд №#{train.number} - введите #{index + 1}"
     end
 
-    trains[gets.to_i - 1]
+    choosen_train = trains[gets.to_i - 1]
+    raise 'Введено некорректное значение' unless choosen_train
+    choosen_train
   end
 
   def choose_route
@@ -274,5 +377,13 @@ class RailRoad
 
     route_index = gets.to_i - 1
     routes[route_index]
+  end
+
+  def choose_wagon(train)
+    show_wagons_in_train(train)
+    wagon_number = gets.to_i
+    wagon = train.wagons[wagon_number - 1]
+    raise 'Введено некорректное значение' unless wagon
+    wagon
   end
 end
