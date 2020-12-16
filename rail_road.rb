@@ -38,6 +38,16 @@ class RailRoad
     w2 = PassengerWagon.new 25
     tr1.add_wagon(w1)
     tr2.add_wagon(w2)
+
+    # set new value for instance var
+    tr1.speed = 30
+    # checking instance var history again
+    # [0, 30]
+    tr1.speed_history
+
+    # set station name with wrong type
+    # RuntimeError (Argument doesn't belong to String class)
+    st1.name = 123
   end
 
   def menu

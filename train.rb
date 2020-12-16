@@ -1,14 +1,22 @@
 require_relative 'produced_by_module'
 require_relative 'instance_counter'
+require_relative 'validation_module'
+require_relative 'accessors_module'
 
 class Train
   include ProducedBy
   include InstanceCounter
+  include Validation
+  include Accessors
 
-  attr_accessor :speed
-  attr_reader :route, :current_station, :number, :type, :wagons
+  attr_accessor_with_history :number, :speed
+  attr_reader :route, :current_station, :type, :wagons
 
   NUMBER_FORMAT = /[а-я, 0-9]{3}\-?[а-я, 0-9]{2}/i
+
+  validate :number, :presence
+  validate :number, :format, NUMBER_FORMAT
+  validate :number, :type, String
 
   @@instances = []
 
@@ -95,12 +103,12 @@ class Train
     end
   end
 
-  def valid?
-    validate!
-    true
-  rescue StandardError
-    false
-  end
+  # def valid?
+  #   validate!
+  #   true
+  # rescue StandardError
+  #   false
+  # end
 
   protected
 
@@ -111,9 +119,9 @@ class Train
     wagon.type == type
   end
 
-  def validate!
-    raise "Number can't be nil" if number.nil?
-    raise "Number can't be empty string" if number.empty? # #|| number.chomp.empty?
-    raise 'Number has invalid format' if number !~ NUMBER_FORMAT
-  end
+  # def validate!
+  #   raise "Number can't be nil" if number.nil?
+  #   raise "Number can't be empty string" if number.empty? # #|| number.chomp.empty?
+  #   raise 'Number has invalid format' if number !~ NUMBER_FORMAT
+  # end
 end
