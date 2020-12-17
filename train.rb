@@ -14,9 +14,9 @@ class Train
 
   NUMBER_FORMAT = /[а-я, 0-9]{3}\-?[а-я, 0-9]{2}/i
 
+  validate :number, :type, String
   validate :number, :presence
   validate :number, :format, NUMBER_FORMAT
-  validate :number, :type, String
 
   @@instances = []
 

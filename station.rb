@@ -10,8 +10,8 @@ class Station
   strong_attr_accessor :name, String
   attr_reader :trains
 
-  validate :name, :presence
   validate :name, :type, String
+  validate :name, :presence
 
   @@instances = []
 
