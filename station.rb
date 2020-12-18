@@ -1,9 +1,17 @@
 require_relative 'instance_counter'
+require_relative 'validation_module'
+require_relative 'accessors_module'
 
 class Station
   include InstanceCounter
+  include Validation
+  include Accessors
 
-  attr_reader :name, :trains
+  strong_attr_accessor :name, String
+  attr_reader :trains
+
+  validate :name, :type, String
+  validate :name, :presence
 
   @@instances = []
 
@@ -34,20 +42,20 @@ class Station
     end
   end
 
-  def validate?
-    validate!
-    true
-  rescue StandardError
-    false
-  end
+  # def validate?
+  #   validate!
+  #   true
+  # rescue StandardError
+  #   false
+  # end
 
   def show_type_sorted_trains
     trains.sort_by(&:type)
   end
 
-  protected
+  # protected
 
-  def validate!
-    raise "Station name can't be empty string" if name.chomp.empty?
-  end
+  # def validate!
+  #   raise "Station name can't be empty string" if name.chomp.empty?
+  # end
 end
