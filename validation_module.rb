@@ -16,7 +16,7 @@ module Validation
   end
 
   module InstanceMethods
-    def presence_validation(value)
+    def presence_validation(value, optional_arg)
       raise "Attribute value shouldn't be nil or empty string" if value.nil? || value.empty? || value.strip.empty?
     end
 
@@ -32,14 +32,7 @@ module Validation
       self.class.validators.each do |validator|
         value = instance_variable_get(validator[:var])
 
-        case validator[:type]
-        when :presence
-          presence_validation value
-        when :type
-          type_validation value, validator[:args]
-        when :format
-          format_validation value, validator[:args]
-        end
+        self.send("#{validator[:type]}_validation", value, validator[:args])
       end
     end
 
